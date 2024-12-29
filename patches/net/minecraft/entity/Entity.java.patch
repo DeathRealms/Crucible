@@ -75,11 +75,13 @@
      private double entityRiderPitchDelta;
      private double entityRiderYawDelta;
      public boolean addedToChunk;
-@@ -126,16 +165,27 @@
+@@ -125,17 +164,28 @@
+     protected int portalCounter;
      public int dimension;
      protected int teleportDirection;
-     private boolean invulnerable;
+-    private boolean invulnerable;
 -    protected UUID entityUniqueID;
++    public boolean invulnerable;
 +    public UUID entityUniqueID; // CraftBukkit - protected -> public
      public Entity.EnumEntitySize myEntitySize;
 +    public boolean valid; // CraftBukkit

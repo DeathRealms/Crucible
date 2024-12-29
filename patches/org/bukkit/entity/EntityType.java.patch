@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/entity/EntityType.java
++++ ../src-work/minecraft/org/bukkit/entity/EntityType.java
+@@ -143,6 +143,7 @@
+     HORSE("EntityHorse", Horse.class, 100),
+     VILLAGER("Villager", Villager.class, 120),
+     ENDER_CRYSTAL("EnderCrystal", EnderCrystal.class, 200),
++    ENTITY_NAMETAG("EntityNameTag", NameTag.class, 255),
+     // These don't have an entity ID in nms.EntityTypes.
+     /**
+      * A flying splash potion.

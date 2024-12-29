@@ -1,15 +1,19 @@
 package io.github.crucible;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.cauldron.CauldronHooks;
 import net.minecraftforge.common.DimensionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.spigotmc.RestartCommand;
 
@@ -17,8 +21,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CrucibleCommand extends Command {
 
@@ -38,6 +41,7 @@ public class CrucibleCommand extends Command {
         usage.append("&b  >&e crucible heap &7-&a Dump the server heap.\n");
         usage.append("&b  >&e crucible plugins &7-&a Shows all your loaded plugins and mod plugins.\n");
         usage.append("&b  >&e crucible mods &7-&a Shows all your loaded mods.\n");
+        usage.append("&b  >&e crucible findChunks &7-&a Find and filter *loaded* chunks by their content.");
         setUsage(ChatColor.translateAlternateColorCodes('&', usage.toString()));
         setPermission("crucible");
     }
@@ -50,7 +54,7 @@ public class CrucibleCommand extends Command {
         info.append("Plugins: ").append(Bukkit.getPluginManager().getPlugins().length).append("\n&r");
         info.append("Mods: ").append(Loader.instance().getActiveModList().size())
                 .append(" &r| Loaded: ").append(Loader.instance().getModList().size()).append("\n&r");
-        return ChatColor.translateAlternateColorCodes('&' ,info.toString());
+        return ChatColor.translateAlternateColorCodes('&', info.toString());
     }
 
     private static String getPluginList() {
@@ -194,7 +198,11 @@ public class CrucibleCommand extends Command {
             if (!testPermission(sender, "crucible.plugins"))
                 return true;
             sender.sendMessage("Plugins " + getPluginList());
-        } else if (args[0].equalsIgnoreCase("")) {
+        } else if (args[0].equalsIgnoreCase("findChunks")) {
+            if (!testPermission(sender, "crucible.findChunks"))
+                return true;
+            findChunks(sender, args);
+        }else if (args[0].equalsIgnoreCase("")) {
             if (!testPermission(sender, "crucible."))
                 return true;
         } else {
@@ -202,6 +210,35 @@ public class CrucibleCommand extends Command {
             sender.sendMessage(usageMessage);
         }
         return true;
+    }
+
+    private void findChunks(CommandSender sender, String[] args) {
+        WorldServer world;
+        if (args.length >= 2) {
+            int id;
+            try {
+                id = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage(ChatColor.BLUE + "[Crucible] " + ChatColor.DARK_RED + "World ID is not a valid number!");
+                return;
+            }
+            world = DimensionManager.getWorld(id);
+            if (world == null) {
+                sender.sendMessage(ChatColor.BLUE + "[Crucible] " + ChatColor.DARK_RED + "World not found!");
+                return;
+            }
+        } else if (sender instanceof Player) {
+            world = ((Player) sender).getWorld().getWorldServer();
+        } else {
+            world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers[0];
+        }
+        List<Chunk> chunks = new ArrayList<>(world.theChunkProviderServer.loadedChunkHashMap_KC.rawVanilla().values());
+        chunks.sort(Collections.reverseOrder(Comparator.comparingInt(c -> c.chunkTileEntityMap.size())));
+        for (int i = 0; i < Math.min(chunks.size(), 20); i++) {
+            Chunk chunk = chunks.get(i);
+            sender.sendMessage(String.format(ChatColor.translateAlternateColorCodes('&', "&7[&e%s&7, &e%s&7] &r Tile Entities:%s"),
+                    chunk.xPosition << 4, chunk.zPosition << 4, chunk.chunkTileEntityMap.size()));
+        }
     }
 
     public boolean testPermission(CommandSender target, String permission) {

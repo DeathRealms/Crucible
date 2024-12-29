@@ -221,6 +221,10 @@ public class CraftBlock implements Block {
         return CraftMagicNumbers.getBlock(this); // TODO: UPDATE THIS
     }
 
+    public net.minecraft.block.Block getHandle() {
+        return getNMSBlock();
+    }
+
     public World getWorld() {
         return chunk.getWorld();
     }

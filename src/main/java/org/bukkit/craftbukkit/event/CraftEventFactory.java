@@ -6,14 +6,16 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.world.ChunkPosition;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.ForgeDirection;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -44,6 +46,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -776,6 +779,12 @@ public class CraftEventFactory {
         return container;
     }
 
+    public static net.minecraft.item.ItemStack callPrepareAnvilEvent(InventoryView view, ItemStack item) {
+        PrepareAnvilEvent event = new PrepareAnvilEvent(view, CraftItemStack.asCraftMirror(item).clone());
+        event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
+        return CraftItemStack.asNMSCopy(event.getResult());
+    }
+
     public static net.minecraft.item.ItemStack callPreCraftEvent(net.minecraft.inventory.InventoryCrafting matrix, net.minecraft.item.ItemStack result, InventoryView lastCraftView, boolean isRepair) {
         CraftInventoryCrafting inventory = new CraftInventoryCrafting(matrix, matrix.resultInventory);
         inventory.setResult(CraftItemStack.asCraftMirror(result));
@@ -823,6 +832,14 @@ public class CraftEventFactory {
     public static void callPlayerItemBreakEvent(net.minecraft.entity.player.EntityPlayer human, net.minecraft.item.ItemStack brokenItem) {
         CraftItemStack item = CraftItemStack.asCraftMirror(brokenItem);
         PlayerItemBreakEvent event = new PlayerItemBreakEvent((Player) human.getBukkitEntity(), item);
+        Bukkit.getPluginManager().callEvent(event);
+    }
+
+    public static void callNeighborChangedEvent(net.minecraft.world.World world, net.minecraft.tileentity.TileEntity block, ChunkPosition changedPosition) {
+        org.bukkit.World bukkitWorld = world.getWorld();
+        org.bukkit.block.Block bukkitBlock = bukkitWorld.getBlockAt(block.xCoord, block.yCoord, block.zCoord);
+        org.bukkit.block.Block bukkitChangedBlock = bukkitWorld.getBlockAt(changedPosition.chunkPosX, changedPosition.chunkPosY, changedPosition.chunkPosZ);
+        NeighborChangedEvent event = new NeighborChangedEvent(bukkitBlock, bukkitChangedBlock);
         Bukkit.getPluginManager().callEvent(event);
     }
 

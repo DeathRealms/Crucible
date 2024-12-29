@@ -193,7 +193,7 @@ public final class CraftItemStack extends ItemStack {
         }
 
         if (item.stackTagCompound == null) {
-            item.stackTagCompound = item.writeToNBT(new net.minecraft.nbt.NBTTagCompound());
+            item.stackTagCompound = new net.minecraft.nbt.NBTTagCompound();
         }
 
         ((CraftMetaItem) itemMeta).applyToItem(item.stackTagCompound);
@@ -202,6 +202,10 @@ public final class CraftItemStack extends ItemStack {
 
     static boolean hasItemMeta(net.minecraft.item.ItemStack item) {
         return !(item == null || item.stackTagCompound == null || item.stackTagCompound.hasNoTags());
+    }
+
+    public net.minecraft.item.ItemStack getHandle() {
+        return handle;
     }
 
     @Override

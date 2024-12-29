@@ -49,7 +49,7 @@
  public final class ItemStack
  {
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.###");
-@@ -43,7 +63,12 @@
+@@ -43,7 +63,13 @@
      private Item field_151002_e;
      public NBTTagCompound stackTagCompound;
      int itemDamage;
@@ -60,10 +60,11 @@
 +    //         This fixes EE3's serialization of ItemStack.
 +    private transient EntityItemFrame itemFrame;
 +    public static EntityPlayer currentPlayer; // Cauldron - reference to current player calling onItemUse
++    public static final ItemStack EMPTY = new ItemStack((Void) null);
      private static final String __OBFID = "CL_00000043";
  
      private cpw.mods.fml.common.registry.RegistryDelegate<Item> delegate;
-@@ -82,12 +107,23 @@
+@@ -82,12 +108,27 @@
          {
              this.itemDamage = 0;
          }
@@ -71,6 +72,10 @@
 +        sizeCheck(this);
      }
  
++    public ItemStack(Void ovoid) {
++        func_150996_a(null);
++    }
++
 +    public static void sizeCheck(ItemStack stack)
 +    {
 +    	if(stack.stackSize < -1)
@@ -87,7 +92,7 @@
          return itemstack.getItem() != null ? itemstack : null;
      }
  
-@@ -126,12 +162,14 @@
+@@ -126,12 +167,14 @@
      public boolean tryPlaceItemIntoWorld(EntityPlayer p_77943_1_, World p_77943_2_, int p_77943_3_, int p_77943_4_, int p_77943_5_, int p_77943_6_, float p_77943_7_, float p_77943_8_, float p_77943_9_)
      {
          if (!p_77943_2_.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
@@ -103,7 +108,7 @@
  
          return flag;
      }
-@@ -143,6 +181,7 @@
+@@ -143,6 +186,7 @@
  
      public ItemStack useItemRightClick(World p_77957_1_, EntityPlayer p_77957_2_)
      {
@@ -111,7 +116,7 @@
          return this.getItem().onItemRightClick(this, p_77957_1_, p_77957_2_);
      }
  
-@@ -153,7 +192,8 @@
+@@ -153,7 +197,8 @@
  
      public NBTTagCompound writeToNBT(NBTTagCompound p_77955_1_)
      {
@@ -121,7 +126,7 @@
          p_77955_1_.setByte("Count", (byte)this.stackSize);
          p_77955_1_.setShort("Damage", (short)this.itemDamage);
  
-@@ -175,6 +215,8 @@
+@@ -175,6 +220,8 @@
          {
              this.itemDamage = 0;
          }
@@ -130,7 +135,7 @@
  
          if (p_77963_1_.hasKey("tag", 10))
          {
-@@ -184,11 +226,13 @@
+@@ -184,11 +231,13 @@
  
      public int getMaxStackSize()
      {
@@ -144,7 +149,7 @@
          return this.getMaxStackSize() > 1 && (!this.isItemStackDamageable() || !this.isItemDamaged());
      }
  
-@@ -227,8 +271,22 @@
+@@ -227,8 +276,22 @@
          return getItem().getMaxDamage(this);
      }
  
@@ -167,7 +172,7 @@
          if (!this.isItemStackDamageable())
          {
              return false;
-@@ -250,6 +308,23 @@
+@@ -250,6 +313,23 @@
  
                  p_96631_1_ -= k;
  
@@ -191,7 +196,7 @@
                  if (p_96631_1_ <= 0)
                  {
                      return false;
-@@ -267,7 +342,7 @@
+@@ -267,7 +347,7 @@
          {
              if (this.isItemStackDamageable())
              {
@@ -200,7 +205,7 @@
                  {
                      p_77972_2_.renderBrokenItemStack(this);
                      --this.stackSize;
-@@ -283,11 +358,14 @@
+@@ -283,11 +363,14 @@
                          }
                      }
  
@@ -218,7 +223,7 @@
                      this.itemDamage = 0;
                  }
              }
-@@ -326,6 +404,8 @@
+@@ -326,6 +409,8 @@
  
      public ItemStack copy()
      {
@@ -227,7 +232,7 @@
          ItemStack itemstack = new ItemStack(this.field_151002_e, this.stackSize, this.itemDamage);
  
          if (this.stackTagCompound != null)
-@@ -419,6 +499,7 @@
+@@ -419,6 +504,7 @@
  
      public void setTagCompound(NBTTagCompound p_77982_1_)
      {
@@ -235,7 +240,7 @@
          this.stackTagCompound = p_77982_1_;
      }
  
-@@ -768,4 +849,12 @@
+@@ -768,4 +854,12 @@
  
          return ichatcomponent;
      }

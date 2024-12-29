@@ -32,8 +32,8 @@ Advantages over Thermos:
   * To create the patches with the changes made just run: `./gradlew genPatches`
 * Building
   * Before you can build you must first setup the workspace!
-  * To build just run the command: `./gradlew jar`
-  * All builds will be in `build/distributions`
+  * To build the distribution packages run the command: `./gradlew buildPackages`
+  * The distribution package will be in `build/distributions`
 * Updating sources
   * Update sources: `git pull origin master`
   * Recreate the workspace: `./gradlew clean setupCrucible`

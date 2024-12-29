@@ -100,3 +100,12 @@
      @SideOnly(Side.CLIENT)
      protected String getTextureName()
      {
+@@ -1206,7 +1246,7 @@
+      */
+     public boolean isNormalCube(IBlockAccess world, int x, int y, int z)
+     {
+-        return getMaterial().isOpaque() && renderAsNormalBlock() && !canProvidePower();
++        return getMaterial().isOpaque() && renderAsNormalBlock() && (!canProvidePower() || this instanceof BlockDispenser);
+     }
+ 
+     /**

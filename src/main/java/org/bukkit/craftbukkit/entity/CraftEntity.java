@@ -165,6 +165,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.entity.passive.EntityAmbientCreature) {
                 if (entity instanceof net.minecraft.entity.passive.EntityBat) {
                     return new CraftBat(server, (net.minecraft.entity.passive.EntityBat) entity);
+                } else if (entity instanceof net.minecraft.entity.passive.EntityNameTag) {
+                    return new CraftNameTag(server, (net.minecraft.entity.passive.EntityNameTag) entity);
                 } else {
                     return new CraftAmbient(server, (net.minecraft.entity.passive.EntityAmbientCreature) entity);
                 }
@@ -393,6 +395,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (net.minecraft.entity.passive.EntityAmbientCreature.class.isAssignableFrom(nmsClass)) {
                 if (net.minecraft.entity.passive.EntityBat.class.isAssignableFrom(nmsClass)) {
                     return CraftBat.class;
+                } else if (net.minecraft.entity.passive.EntityNameTag.class.isAssignableFrom(nmsClass)) {
+                    return CraftNameTag.class;
                 } else {
                     return CraftAmbient.class;
                 }

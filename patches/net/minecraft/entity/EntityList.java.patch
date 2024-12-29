@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityList.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
+@@ -43,17 +43,7 @@
+ import net.minecraft.entity.monster.EntitySpider;
+ import net.minecraft.entity.monster.EntityWitch;
+ import net.minecraft.entity.monster.EntityZombie;
+-import net.minecraft.entity.passive.EntityBat;
+-import net.minecraft.entity.passive.EntityChicken;
+-import net.minecraft.entity.passive.EntityCow;
+-import net.minecraft.entity.passive.EntityHorse;
+-import net.minecraft.entity.passive.EntityMooshroom;
+-import net.minecraft.entity.passive.EntityOcelot;
+-import net.minecraft.entity.passive.EntityPig;
+-import net.minecraft.entity.passive.EntitySheep;
+-import net.minecraft.entity.passive.EntitySquid;
+-import net.minecraft.entity.passive.EntityVillager;
+-import net.minecraft.entity.passive.EntityWolf;
++import net.minecraft.entity.passive.*;
+ import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.entity.projectile.EntityLargeFireball;
+ import net.minecraft.entity.projectile.EntityPotion;
+@@ -158,7 +148,10 @@
+ 
+             if (oclass != null)
+             {
+-                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_75615_1_});
++                try {
++                    entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_75615_1_});
++                } catch (Exception ignored) {
++                }
+             }
+         }
+         catch (Exception exception)
+@@ -182,7 +175,10 @@
+         }
+         else
+         {
+-            logger.warn("Skipping Entity with id " + p_75615_0_.getString("id"));
++            String id = p_75615_0_.getString("id");
++            if (!id.equals("EntityNameTag") && !id.equals("Bat")) {
++                logger.warn("Skipping Entity with id " + p_75615_0_.getString("id"));
++            }
+         }
+ 
+         return entity;
+@@ -198,7 +194,10 @@
+ 
+             if (oclass != null)
+             {
+-                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_75616_1_});
++                try {
++                    entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_75616_1_});
++                } catch (Exception ignored) {
++                }
+             }
+         }
+         catch (Exception exception)
+@@ -287,7 +286,7 @@
+         addMapping(EntityMagmaCube.class, "LavaSlime", 62, 3407872, 16579584);
+         addMapping(EntityDragon.class, "EnderDragon", 63);
+         addMapping(EntityWither.class, "WitherBoss", 64);
+-        addMapping(EntityBat.class, "Bat", 65, 4996656, 986895);
++//        addMapping(EntityBat.class, "Bat", 65, 4996656, 986895);
+         addMapping(EntityWitch.class, "Witch", 66, 3407872, 5349438);
+         addMapping(EntityPig.class, "Pig", 90, 15771042, 14377823);
+         addMapping(EntitySheep.class, "Sheep", 91, 15198183, 16758197);
+@@ -302,6 +301,7 @@
+         addMapping(EntityHorse.class, "EntityHorse", 100, 12623485, 15656192);
+         addMapping(EntityVillager.class, "Villager", 120, 5651507, 12422002);
+         addMapping(EntityEnderCrystal.class, "EnderCrystal", 200);
++        addMapping(EntityNameTag.class, "EntityNameTag", 65);
+     }
+ 
+     public static class EntityEggInfo
